@@ -1,52 +1,32 @@
-'''
-This program computes the transcript genomic length (i.e exon + intron). Develop with Python 3.
-
-Author: M2 Bioinfo, AMU
-Usage:
-  $ python compute_tx_len.py
-'''
-
+transcriptStart = dict()
+transcriptEnd = dict()
 
 import re
 
-def write_tx_genomic_len(input_file):
-    '''
-    This functions takes a GTF file as input,
-    computes transcript genomic sizes and write the result to
-    STDOUT.
-    '''
+fileHandler = open("simple.gtf", "r")
 
-    # These dictionnaries will store
-    # the most 5' and most 3' exon coordinates (values)
-    # for each transcript (key).
-    tx_starts = dict()
-    tx_ends = dict()
+for line in fileHandler:
+    Token = line.split("\t")  
+    start = int(Token[3]) # le début de l'élément courant
+    end = int(Token[4]) # la fin de l'élément courant
+    # L'identifiant du transcrit
+    txID = re.search('transcript_id "([^"]+)"', Token[8]).group(1)
 
-    file_handler = open(input_file)
+    if txID not in transcriptStart:
 
-    for line in file_handler:
-        token = line.split("\t")
-        start = int(token[3])
-        end = int(token[4])
-        tx_id = re.search('transcript_id "([^"]+)"', token[8]).group(1)
+        transcriptStart[txID] = start
+        transcriptEnd[txID] = end
 
-        if tx_id not in tx_starts:
+    else:
+        if start < transcriptStart[txID]: 
 
-            tx_starts[tx_id] = start
-            tx_ends[tx_id] = end
+            transcriptStart[txID] = start
 
-        else:
-            if start < tx_starts[tx_id]:
+        if end > transcriptEnd[txID]:
 
-                tx_starts[tx_id] = start
+            transcriptEnd[txID] = end
 
-            if end > tx_ends[tx_id]:
+            
+for txID in transcriptStart:
 
-                tx_ends[tx_id] = end
-
-    for tx_id in tx_starts:
-        genomic_len = tx_ends[tx_id] - tx_starts[tx_id] + 1
-        print(tx_id + "\t" + str(genomic_len))
-
-if __name__ == '__main__':
-    write_tx_genomic_len("../gtf/simple.gtf")
+    print(txID + "\t" + str(transcriptEnd[txID] - transcriptStart[txID] + 1))
