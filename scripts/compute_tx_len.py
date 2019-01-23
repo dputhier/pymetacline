@@ -1,32 +1,42 @@
-transcriptStart = dict()
-transcriptEnd = dict()
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+transcriptStart=dict()
+transcriptEnd=dict()
+
 
 import re
 
-fileHandler = open("../pymetacline/data/gtf/simple.gtf", "r")
+def GetTxGenomicLength(input_file = None):
 
-for line in fileHandler:
-    Token = line.split("\t")  
-    start = int(Token[3]) # le début de l'élément courant
-    end = int(Token[4]) # la fin de l'élément courant
-    # L'identifiant du transcrit
-    txID = re.search('transcript_id "([^"]+)"', Token[8]).group(1)
+    fileHandler=open(input_file)
+    for line in fileHandler:
+        Token=line.split("\t")  
+        start=int(Token[3]) # le début de l'élément courant
+        end=int(Token[4]) # la fin de l'élément courant
+        # L'identifiant du transcrit
 
-    if txID not in transcriptStart:
+        txID=re.search('transcript_id "([^"]+)"', Token[8]).group(1)
 
-        transcriptStart[txID] = start
-        transcriptEnd[txID] = end
+        if txID not in transcriptStart:
 
-    else:
-        if start < transcriptStart[txID]: 
+            transcriptStart[txID]=start
+            transcriptEnd[txID]=end
 
-            transcriptStart[txID] = start
+        else:
+            if start < transcriptStart[txID]: 
 
-        if end > transcriptEnd[txID]:
+                transcriptStart[txID]= start
 
-            transcriptEnd[txID] = end
+                if end > transcriptEnd[txID]:
+
+                    transcriptEnd[txID]= end
 
             
-for txID in transcriptStart:
+    for txID in transcriptStart:
 
-    print(txID + "\t" + str(transcriptEnd[txID] - transcriptStart[txID] + 1))
+        print(txID + "\t" + str(transcriptEnd[txID] - transcriptStart[txID] + 1))
+
+
+if __name__ == '__main__':
+    GetTxGenomicLength(input_file = '../pymetacline/data/gtf/simple.gtf')
