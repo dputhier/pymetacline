@@ -3,7 +3,7 @@ transcriptEnd = dict()
 
 import re
 
-fileHandler = open("simple.gtf", "r")
+fileHandler = open("../pymetacline/data/gtf/simple.gtf", "r")
 
 for line in fileHandler:
     Token = line.split("\t")  

@@ -91,7 +91,7 @@ setup(name="pymetacline",
                     'pymetacline/data/gtf': ['*.*'],
                     'docs': ['Makefile'],
                     'docs/source': ['*.*']},
-      scripts=['bin/compute_tx_len.py'],
+      scripts=['scripts/compute_tx_len.py'],
       license='LICENSE',
 
       classifiers=classifiers,
